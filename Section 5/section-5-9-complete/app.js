@@ -15,7 +15,6 @@ var data            =   [
     { key: 13, num: 26 },
     { key: 14, num: 9 }
 ];
-
 var key             =   function(d){
     return d.key;
 };
@@ -38,7 +37,7 @@ var x_scale         =   d3.scaleBand()
     .paddingInner( 0.05 );
 var y_scale         =   d3.scaleLinear()
     .domain([
-        0, d3.max(data, function( d ){
+        0, d3.max( data, function(d){
             return d.num;
         })
     ])
@@ -50,14 +49,14 @@ svg.selectAll( 'rect' )
     .enter()
     .append( 'rect' )
     .attr( 'x', function( d, i ){
-        return x_scale( i );
+        return x_scale(i);
     })
     .attr( 'y', function(d ){
-        return chart_height - y_scale(d.num);
+        return chart_height - y_scale( d.num );
     })
     .attr( 'width', x_scale.bandwidth() )
     .attr( 'height', function( d ){
-        return y_scale(d.num);
+        return y_scale( d.num );
     })
     .attr( 'fill', '#7ED26D' );
 
@@ -72,95 +71,99 @@ svg.selectAll( 'text' )
     .attr( 'x', function( d, i ){
         return x_scale( i ) + x_scale.bandwidth() / 2;
     })
-    .attr( 'y', function( d ){
-        return chart_height - y_scale( d.num ) + 15;
+    .attr( 'y', function(d ){
+        return chart_height - y_scale(d.num) + 15;
     })
     .attr( 'font-size', 14 )
     .attr( 'fill', '#fff' )
     .attr( 'text-anchor', 'middle' );
 
 // Events
-d3.select( '.update' ).on( 'click', function(){
+d3.select('.update').on("click", function() {
+    console.log(1);
+    // Reverse Data
     // data.reverse();
-    data[0].num          =   50;
+    data[0].num         =   50;
     y_scale.domain([ 0, d3.max(data, function(d){
         return d.num;
     })]);
 
-    svg.selectAll( 'rect' )
-        .data( data, key )
+    //Update Bars
+    svg.selectAll("rect")
+        .data(data, key)
         .transition()
-        .delay(function( d, i ){
+        .delay(function(d, i){
             return i / data.length * 1000;
         })
-        .duration( 1000 )
-        .ease( d3.easeElasticOut )
-        .attr( 'y', function(d ){
+        .duration(1000)
+        .ease(d3.easeElasticOut)
+        .attr("y", function(d) {
             return chart_height - y_scale(d.num);
         })
-        .attr( 'height', function( d ){
+        .attr("height", function(d) {
             return y_scale(d.num);
         });
 
-    svg.selectAll( 'text' )
+    // Update Labels
+    svg.selectAll("text")
         .data(data, key)
         .transition()
-        .delay(function( d, i ){
+        .delay(function(d, i){
             return i / data.length * 1000;
         })
-        .duration( 1000 )
-        .ease( d3.easeElasticOut )
+        .duration(1000)
+        .ease(d3.easeElasticOut)
         .text(function( d ){
             return d.num;
         })
-        .attr( 'x', function( d, i ){
-            return x_scale( i ) + x_scale.bandwidth() / 2;
+        .attr("x", function(d, i) {
+            return x_scale(i) + x_scale.bandwidth() / 2;
         })
-        .attr( 'y', function( d ){
-            return chart_height - y_scale( d.num ) + 15;
-        });
+        .attr("y", function(d) {
+            return chart_height - y_scale(d.num) + 15;
+        })
 });
 
 // Add Data
-d3.select( '.add' ).on( 'click', function(){
+d3.select('.add').on( 'click', function(){
     // Add New Data
     var new_num         =   Math.floor(Math.random() * d3.max(data, function(d){
         return d.num;
     }));
     data.push({
-        key: data[data.length-1].key + 1, num: new_num
+        key: data[data.length-1].key+1, num: new_num
     });
 
     // Update Scales
-    x_scale.domain( d3.range( data.length ) );
-    y_scale.domain([ 0, d3.max( data, function(d){
+    x_scale.domain(d3.range(data.length));
+    y_scale.domain([ 0, d3.max(data, function(d){
         return d.num;
     })]);
 
-    // Select bars
-    var bars            =  svg.selectAll( 'rect' ).data(data, key);
+    // Select Bars
+    var bars            =   svg.selectAll( 'rect' ).data(data, key);
 
-    // Add new bar
+    // Add New Bar
     bars.enter()
-        .append( 'rect' )
-        .attr( 'x', function( d, i ){
+        .append( "rect" )
+        .attr( 'x', function(d, i) {
             return x_scale(i);
         })
         .attr( 'y', chart_height )
         .attr( 'width', x_scale.bandwidth() )
-        .attr( 'height', 0 )
+        .attr( 'height', 0)
         .attr( 'fill', '#7ED26D' )
-        .merge( bars )
+        .merge(bars)
         .transition()
-        .duration( 1000 )
-        .attr( 'x', function( d, i ){
-            return x_scale( i );
+        .duration(1000)
+        .attr("x", function(d, i) {
+            return x_scale(i);
         })
-        .attr( 'y', function(d ){
+        .attr("y", function(d) {
             return chart_height - y_scale(d.num);
         })
-        .attr( 'width', x_scale.bandwidth() )
-        .attr( 'height', function( d ){
+        .attr("width", x_scale.bandwidth())
+        .attr("height", function(d) {
             return y_scale(d.num);
         });
 
@@ -217,7 +220,7 @@ d3.select('.remove').on('click', function(){
             return y_scale(d.num);
         });
 
-    // Remove Bar
+    // Remove bar
     bars.exit()
         .transition()
         .attr( 'x', -x_scale.bandwidth() )
